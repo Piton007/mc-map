@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_marker_popup/extension_api.dart';
+import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import "package:latlong/latlong.dart";
+import "package:free_radar/popupMarker.dart";
 
 
 
@@ -23,6 +26,7 @@ class MyApp extends StatelessWidget {
 }
 
 class FreeMap extends StatelessWidget {
+  final PopupController _popupController = PopupController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,19 +37,31 @@ class FreeMap extends StatelessWidget {
         new FlutterMap(options: new MapOptions(
             zoom:13.0,
             maxZoom: 18.0,
-            center:  new LatLng( -12.046374, -77.042793)),
+            center:  new LatLng( -12.046374, -77.042793),
+            onTap: (_)=> _popupController.hidePopup(),
+          plugins: [ PopupMarkerPlugin() ]
+        ),
             layers: [
               new TileLayerOptions(
                   urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                   subdomains: ['a','b','c']),
-              new MarkerLayerOptions(markers: [
-                new Marker(
-                    width: 50,height: 80.0,
-                    point: new LatLng( -12.046374, -77.042793),
-                    builder: (context)=>
-                    new Container(
-          child: new FlutterLogo(),
-        ))])])
+              PopupMarkerLayerOptions(
+                markers: [
+                  new Marker(
+                      width: 50,height: 80.0,
+                      point: new LatLng( -12.046374, -77.042793),
+                      builder: (context)=>
+                      new Container(
+                        child: new FlutterLogo(),
+                      ))],
+                popupSnap: PopupSnap.top,
+                popupController: _popupController,
+                popupBuilder: (BuildContext _, Marker marker) => PopupMaker(marker)
+
+
+              )
+
+            ])
       ],)
     );
   }
