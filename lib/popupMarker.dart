@@ -1,37 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 
-class PopupMaker extends StatefulWidget {
+class ExamplePopup extends StatefulWidget {
   final Marker marker;
 
-  PopupMaker(this.marker,{Key key}) : super(key:key);
+  ExamplePopup(this.marker, {Key key}) : super(key: key);
 
   @override
-  _PopupMakerState createState() => _PopupMakerState(this.marker);
+  State<StatefulWidget> createState() => _ExamplePopupState(this.marker);
 }
 
-class _PopupMakerState extends State<PopupMaker> {
-
+class _ExamplePopupState extends State<ExamplePopup> {
   final Marker _marker;
 
-  final List<IconData> icons = [
+  final List<IconData> _icons = [
     Icons.star_border,
     Icons.star_half,
     Icons.star
   ];
-
   int _currentIcon = 0;
 
-  _PopupMakerState(this._marker);
+  _ExamplePopupState(this._marker);
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Card(
+      child: InkWell(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(left: 20, right: 10),
+              child: Icon(_icons[_currentIcon]),
+            ),
+            _cardDescription(context),
+          ],
+        ),
+        onTap: () => setState(() {
+          _currentIcon = (_currentIcon + 1) % _icons.length;
+        }),
+      ),
+    );
   }
 
-
-
-  Widget _cardDescription (BuildContext context){
+  Widget _cardDescription(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Container(
@@ -41,26 +53,27 @@ class _PopupMakerState extends State<PopupMaker> {
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-             Text(
-               "Popup for a maker",
-               overflow: TextOverflow.fade,
-               softWrap: false,
-               style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14.0)
-             ),
-            const Padding(padding:EdgeInsets.symmetric(vertical:4.0)),
             Text(
-              "Position ${_marker.point.latitude}, ${_marker.point.longitude}",
-              style: const TextStyle(fontSize:12.0),
+              "Popup for a marker!",
+              overflow: TextOverflow.fade,
+              softWrap: false,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 14.0,
+              ),
+            ),
+            const Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
+            Text(
+              "Position: ${_marker.point.latitude}, ${_marker.point.longitude}",
+              style: const TextStyle(fontSize: 12.0),
             ),
             Text(
               "Marker size: ${_marker.width}, ${_marker.height}",
-              style: const TextStyle(fontSize: 12.0)
-            )
-
-          ]
-        )
-
-      )
+              style: const TextStyle(fontSize: 12.0),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
