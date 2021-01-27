@@ -1,7 +1,9 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:free_radar/map/service/gps.dart';
+import 'map/utils/icons.dart' show UserLocation, buildAssetIcon;
+
 import 'popupMarker.dart';
 import 'package:latlong/latlong.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
             body: navigator,
             floatingActionButton: FloatingActionButton(
               onPressed: () {
-                _mapPageStateKey.currentState.move( LatLng(45.683, 10.839));
+                _mapPageStateKey.currentState.focusCurrentPos();
                 _mapPageStateKey.currentState.showPopupForFirstMarker();
               },
               child: Icon(Icons.mode_comment),
@@ -42,7 +44,7 @@ class MyApp extends StatelessWidget {
 class MapPage extends StatefulWidget {
   MapPage(GlobalKey<_MapPageState> key) : super(key: key);
   @override
-  _MapPageState createState() => _MapPageState();
+  _MapPageState createState() => _MapPageState(new GPSService());
 }
 
 class _MapPageState extends State<MapPage> {
@@ -52,38 +54,55 @@ class _MapPageState extends State<MapPage> {
     LatLng(45.246, 5.783),
   ];
 
+  final GPSService service;
   final MapController mapController  = MapController();
 
+  UserLocation _currentLocation;
 
-
-  static const _markerSize = 40.0;
+  static const _markerSize = 80.0;
   List<Marker> _markers;
 
   // Used to trigger showing/hiding of popups.
   final PopupController _popupLayerController = PopupController();
 
+  _MapPageState(GPSService service):service = service;
+
   @override
   void initState() {
     super.initState();
+    service.getCurrentLocation().then((value){
 
+      setState((){
+        _currentLocation = UserLocation(LatLng(value.latitude,value.longitude), 60.0) ;
+        var _newMarkers = List<Marker>.from([_currentLocation.drawMarker()]);
+        _newMarkers.addAll(_markers.sublist(1));
+
+        _markers = _newMarkers;
+        this.focusCurrentPos();
+      });
+    } );
     _markers = _points
         .map(
           (LatLng point) => Marker(
         point: point,
         width: _markerSize,
         height: _markerSize,
-        builder: (_) => Icon(Icons.location_on, size: _markerSize),
+        builder: (_) => buildAssetIcon("marker_logo.svg", _markerSize),
         anchorPos: AnchorPos.align(AnchorAlign.top),
       ),
     )
         .toList();
+
   }
 
   @override
   Widget build(BuildContext context) {
     return FlutterMap(
+
       mapController: this.mapController,
       options: new MapOptions(
+        minZoom: 12.0,
+        maxZoom: 18.0,
         zoom: 5.0,
         center: _points.first,
         plugins: [PopupMarkerPlugin()],
@@ -105,8 +124,8 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  void move(LatLng pos) {
-    this.mapController.move(pos,this.mapController.zoom * 1.5);
+  void focusCurrentPos() {
+    this.mapController.move(this._markers.first.point,this.mapController.zoom * 1.5);
   }
 
   void showPopupForFirstMarker() {
