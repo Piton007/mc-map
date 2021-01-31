@@ -1,17 +1,16 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:free_radar/map/service/gps.dart';
-import 'map/utils/icons.dart' show UserLocation, buildAssetIcon;
+import 'package:free_radar/create_event.dart';
 
-import 'popupMarker.dart';
-import 'package:latlong/latlong.dart';
-import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
+import 'map.dart';
+
+const MAP_INDEX = 1;
+const CREATE_EVENT = 0;
+const FAVORITES = 2;
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final GlobalKey<_MapPageState> _mapPageStateKey = GlobalKey<_MapPageState>();
 
   // This widget is the root of your application.
   @override
@@ -19,116 +18,91 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Marker Popup Demo',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.deepOrange,
         ),
-        home: MapPage(_mapPageStateKey),
-        builder: (context, navigator) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text("Marker Popup Demo"),
-            ),
-            body: navigator,
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                _mapPageStateKey.currentState.focusCurrentPos();
-                _mapPageStateKey.currentState.showPopupForFirstMarker();
-              },
-              child: Icon(Icons.mode_comment),
-              backgroundColor: Colors.green,
-            ),
-          );
-        });
+        home: DisplayManager()
+    );
   }
 }
 
-class MapPage extends StatefulWidget {
-  MapPage(GlobalKey<_MapPageState> key) : super(key: key);
+class DisplayManager extends StatefulWidget {
+
+
+  DisplayManager({Key key}) : super(key: key);
   @override
-  _MapPageState createState() => _MapPageState(new GPSService());
+  _DisplayManagerState createState() => _DisplayManagerState();
 }
 
-class _MapPageState extends State<MapPage> {
-  static final List<LatLng> _points = [
-    LatLng(44.421, 10.404),
-    LatLng(45.683, 10.839),
-    LatLng(45.246, 5.783),
-  ];
+class _DisplayManagerState extends State<DisplayManager> {
 
-  final GPSService service;
-  final MapController mapController  = MapController();
 
-  UserLocation _currentLocation;
+   GlobalKey<MapPageState> mapKey = new GlobalKey<MapPageState>();
+   int _screenSelected = 1;
 
-  static const _markerSize = 80.0;
-  List<Marker> _markers;
 
-  // Used to trigger showing/hiding of popups.
-  final PopupController _popupLayerController = PopupController();
+   List<Widget> _screens = [];
 
-  _MapPageState(GPSService service):service = service;
+   _DisplayManagerState(){
 
-  @override
-  void initState() {
-    super.initState();
-    service.getCurrentLocation().then((value){
+     this._screens = [CreateEventForm(GlobalKey()),MapPage(mapKey),CreateEventForm(GlobalKey())];
+   }
 
-      setState((){
-        _currentLocation = UserLocation(LatLng(value.latitude,value.longitude), 60.0) ;
-        var _newMarkers = List<Marker>.from([_currentLocation.drawMarker()]);
-        _newMarkers.addAll(_markers.sublist(1));
 
-        _markers = _newMarkers;
-        this.focusCurrentPos();
+   void _onItemTapped(int index){
+      setState(() {
+        this._screenSelected = index;
       });
-    } );
-    _markers = _points
-        .map(
-          (LatLng point) => Marker(
-        point: point,
-        width: _markerSize,
-        height: _markerSize,
-        builder: (_) => buildAssetIcon("marker_logo.svg", _markerSize),
-        anchorPos: AnchorPos.align(AnchorAlign.top),
-      ),
-    )
-        .toList();
-
-  }
+   }
 
   @override
   Widget build(BuildContext context) {
-    return FlutterMap(
-
-      mapController: this.mapController,
-      options: new MapOptions(
-        minZoom: 12.0,
-        maxZoom: 18.0,
-        zoom: 5.0,
-        center: _points.first,
-        plugins: [PopupMarkerPlugin()],
-        onTap: (_) =>
-            _popupLayerController.hidePopup(), // Hide popup when the map is tapped.
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Marker Popup Demo"),
       ),
-      layers: [
-        TileLayerOptions(
-          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          subdomains: ['a', 'b', 'c']
-        ),
-        PopupMarkerLayerOptions(
-          markers: _markers,
-          popupSnap: PopupSnap.top,
-          popupController: _popupLayerController,
-          popupBuilder: (BuildContext _, Marker marker) => ExamplePopup(marker),
-        ),
-      ],
+      body: IndexedStack(
+        index:_screenSelected,
+        children: _screens,
+      ),
+      floatingActionButton: (_screenSelected == MAP_INDEX) ? FloatingActionButton(
+        onPressed: () {
+          mapKey.currentState
+            ..focusCurrentPos()
+            ..showPopupForFirstMarker() ;
+
+        },
+        child: Icon(Icons.gps_fixed),
+        backgroundColor: Colors.green,
+      ): null,
+      bottomNavigationBar: BottomNavigationBar(
+
+          items: const <BottomNavigationBarItem> [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home'
+            ),
+            BottomNavigationBarItem(
+                icon:Icon(Icons.map),
+                label: 'Map'
+            ),
+            BottomNavigationBarItem(
+                icon:Icon(Icons.favorite),
+                label: 'Favorites'
+            )
+          ],
+        currentIndex: _screenSelected,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: Colors.red[800],
+        onTap: _onItemTapped
+      ),
     );
   }
-
-  void focusCurrentPos() {
-    this.mapController.move(this._markers.first.point,this.mapController.zoom * 1.5);
-  }
-
-  void showPopupForFirstMarker() {
-    _popupLayerController.togglePopup(_markers.first);
-  }
 }
+
+
+
+
+
+
+
+

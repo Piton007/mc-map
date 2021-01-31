@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg_provider: any
+  flutter_map_location: any
   flutter_map: any
   flutter_map_marker_popup: any
   geolocator: ^5.3.1
