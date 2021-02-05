@@ -23,8 +23,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cloud_firestore: ^0.16.0
+  rxdart: ^0.25.0
+  bloc_pattern: ^2.3.2
   flutter_svg_provider: any
-  flutter_map_location: any
   flutter_map: any
   flutter_map_marker_popup: any
   geolocator: ^5.3.1

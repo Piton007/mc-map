@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "620901788014",
+    "firebase_url": "https://angular-sales-dashboard-default-rtdb.firebaseio.com",
+    "project_id": "angular-sales-dashboard",
+    "storage_bucket": "angular-sales-dashboard.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:620901788014:android:3f1b68dc5f0a2d6478397f",
+        "android_client_info": {
+          "package_name": "com.example.free_radar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "620901788014-l0v5fndchajhhjoiiev2u8knpfmd0ik9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh6UgCwoDlVzAOlnou-CjFexowk080a7Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "620901788014-l0v5fndchajhhjoiiev2u8knpfmd0ik9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

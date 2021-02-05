@@ -1,6 +1,10 @@
 
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
+import 'rap_events.dart';
 import 'package:free_radar/create_event.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 
 import 'map.dart';
 
@@ -8,19 +12,29 @@ const MAP_INDEX = 1;
 const CREATE_EVENT = 0;
 const FAVORITES = 2;
 
-void main() => runApp(MyApp());
+void main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Marker Popup Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.deepOrange,
-        ),
-        home: DisplayManager()
+
+    return BlocProvider(
+      blocs: [
+        Bloc((_) => EventBloc() )
+      ],
+      child: MaterialApp(
+          title: 'Marker Popup Demo',
+          theme: ThemeData(
+            primarySwatch: Colors.deepOrange,
+          ),
+          home: DisplayManager()
+      ),
     );
   }
 }
@@ -68,7 +82,7 @@ class _DisplayManagerState extends State<DisplayManager> {
         onPressed: () {
           mapKey.currentState
             ..focusCurrentPos()
-            ..showPopupForFirstMarker() ;
+            ..showPopupForFirstMarker();
 
         },
         child: Icon(Icons.gps_fixed),
