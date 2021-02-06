@@ -24,7 +24,9 @@ dependencies:
   flutter:
     sdk: flutter
   cloud_firestore: ^0.16.0
-  rxdart: ^0.25.0
+  flutter_compass: ^0.4.3
+  rxdart: ^0.24.1
+  location: ^3.0.0
   bloc_pattern: ^2.3.2
   flutter_svg_provider: any
   flutter_map: any

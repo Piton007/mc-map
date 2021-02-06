@@ -78,16 +78,7 @@ class _DisplayManagerState extends State<DisplayManager> {
         index:_screenSelected,
         children: _screens,
       ),
-      floatingActionButton: (_screenSelected == MAP_INDEX) ? FloatingActionButton(
-        onPressed: () {
-          mapKey.currentState
-            ..focusCurrentPos()
-            ..showPopupForFirstMarker();
 
-        },
-        child: Icon(Icons.gps_fixed),
-        backgroundColor: Colors.green,
-      ): null,
       bottomNavigationBar: BottomNavigationBar(
 
           items: const <BottomNavigationBarItem> [
