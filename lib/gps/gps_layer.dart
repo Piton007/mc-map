@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map/plugin_api.dart';
+import 'package:free_radar/map/utils/icons.dart';
 import 'utils.dart';
 import 'package:location/location.dart';
 import 'package:latlong/latlong.dart';
@@ -14,7 +15,7 @@ import 'gps_options.dart';
 GPSMarkerBuilder _defaultMarkerBuilder =
     (BuildContext context, LatLngData ld, ValueNotifier<double> heading) {
   final double diameter = ld != null && ld.highAccurency() ? 60.0 : 120.0;
-  return Marker(
+  return MCMarker(
     point: ld.location,
     builder: (_) => GPSMarker(ld: ld, heading: heading),
     height: diameter,
@@ -60,15 +61,21 @@ class _GPSLayerState extends State<GPSLayer>
     _lastLocation.addListener(() {
       final LatLngData loc = _lastLocation.value;
       widget.options.onLocationUpdate?.call(loc);
-     if (widget.options.markers.isNotEmpty) {
-        widget.options.markers.removeLast();
-      }
+
+      var user = widget.options.markers.where((element) => element is MCMarker).toList();
+      if (user.isNotEmpty) {
+        user.forEach((e)=>{
+          widget.options.markers.remove(e)
+        });}
       if (loc == null || loc.location == null) {
         return;
       }
-      widget.options.markers.add(widget.options.markerBuilder != null
-          ? widget.options.markerBuilder(context, loc, _heading)
-          : _defaultMarkerBuilder(context, loc, _heading));
+
+        widget.options.markers.add(widget.options.markerBuilder != null
+            ? widget.options.markerBuilder(context, loc, _heading)
+            : _defaultMarkerBuilder(context, loc, _heading));
+
+
       if (_locationRequested) {
         _locationRequested = false;
         widget.options.onLocationRequested?.call(loc);

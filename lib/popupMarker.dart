@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:free_radar/model/event.dart';
 
-class ExamplePopup extends StatefulWidget {
-  final Marker marker;
+import 'map/utils/icons.dart';
 
-  ExamplePopup(this.marker, {Key key}) : super(key: key);
 
-  @override
-  State<StatefulWidget> createState() => _ExamplePopupState(this.marker);
-}
+class EventPopup extends StatelessWidget {
+  final EventMarker event;
 
-class _ExamplePopupState extends State<ExamplePopup> {
-  final Marker _marker;
+  EventPopup(Marker event):event = event as EventMarker;
 
-  final List<IconData> _icons = [
-    Icons.star_border,
-    Icons.star_half,
-    Icons.star
-  ];
-  int _currentIcon = 0;
-
-  _ExamplePopupState(this._marker);
 
   @override
   Widget build(BuildContext context) {
@@ -29,16 +18,10 @@ class _ExamplePopupState extends State<ExamplePopup> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(left: 20, right: 10),
-              child: Icon(_icons[_currentIcon]),
-            ),
             _cardDescription(context),
           ],
         ),
-        onTap: () => setState(() {
-          _currentIcon = (_currentIcon + 1) % _icons.length;
-        }),
+        onTap: () => print("on tap"),
       ),
     );
   }
@@ -54,7 +37,7 @@ class _ExamplePopupState extends State<ExamplePopup> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              "Popup for a marker!",
+              event.model.nombre,
               overflow: TextOverflow.fade,
               softWrap: false,
               style: const TextStyle(
@@ -64,11 +47,11 @@ class _ExamplePopupState extends State<ExamplePopup> {
             ),
             const Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
             Text(
-              "Position: ${_marker.point.latitude}, ${_marker.point.longitude}",
+              "Creador: ${event.model.creador}",
               style: const TextStyle(fontSize: 12.0),
             ),
             Text(
-              "Marker size: ${_marker.width}, ${_marker.height}",
+              "Cupos: ${event.model.cupos}",
               style: const TextStyle(fontSize: 12.0),
             ),
           ],
@@ -77,3 +60,5 @@ class _ExamplePopupState extends State<ExamplePopup> {
     );
   }
 }
+
+

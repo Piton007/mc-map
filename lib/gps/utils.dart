@@ -1,3 +1,4 @@
+import 'package:free_radar/map/utils/icons.dart';
 import 'package:latlong/latlong.dart';
 
 class LatLngData {

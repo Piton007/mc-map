@@ -1,7 +1,5 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-
+import 'package:latlong/latlong.dart';
 
 class EventModel {
   final String creador;
@@ -9,16 +7,27 @@ class EventModel {
   final String nombre;
   final GeoPoint ubicacion;
 
-  EventModel({this.creador,this.cupos,this.nombre,this.ubicacion});
+  EventModel({this.creador, this.cupos, this.nombre, this.ubicacion});
 
-  factory EventModel.fromJson(Map<String,dynamic> json){
+  factory EventModel.fromJson(Map<String, dynamic> json) {
     return EventModel(
-      creador:json['creador'] as String,
-      cupos: json['cupos'] as int,
-      nombre: json['nombre'] as String,
-      ubicacion: json['ubicacion'] as GeoPoint
-    );
+        creador: json['creador'] as String,
+        cupos: json['cupos'] as int,
+        nombre: json['nombre'] as String,
+        ubicacion: json['ubicacion'] as GeoPoint);
   }
 
+  EventModel.fromDocument(QueryDocumentSnapshot document)
+      : this.creador = document['creador'],
+        this.cupos = 2,
+        this.nombre = document['nombre'],
+        this.ubicacion = document['ubicacion'] as GeoPoint;
 
+  get point {
+    return LatLng(this.ubicacion.latitude, this.ubicacion.longitude);
+  }
+
+  bool isAvailable() {
+    return cupos > 0;
+  }
 }
