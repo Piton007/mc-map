@@ -11,9 +11,9 @@ Widget buildAssetIcon(String name, double size) {
 }
 
 class EventMarker extends Marker {
-  final EventModel model;
+  EventModel model;
 
-  EventMarker._(
+  EventMarker(
       {@required EventModel event,
       LatLng point,
       double width,
@@ -34,7 +34,7 @@ class EventMarker extends Marker {
       double height,
       WidgetBuilder builder,
       AnchorPos anchorPos})
-      : this._(
+      :this(
             point: event.point,
             event: event,
             width: width,
@@ -43,17 +43,12 @@ class EventMarker extends Marker {
             anchorPos: anchorPos);
 }
 
-class MCMarker extends Marker {
+class MCMarker extends EventMarker {
   MCMarker(
       {LatLng point,
       double width,
       double height,
       WidgetBuilder builder,
       AnchorPos anchorPos})
-      : super(
-            point: point,
-            builder: builder,
-            width: width,
-            height: height,
-            anchorPos: anchorPos);
+      : super(event: null,anchorPos: anchorPos,width: width,height: height,builder: builder,point: point);
 }
