@@ -58,7 +58,7 @@ class _DisplayManagerState extends State<DisplayManager> {
 
    _DisplayManagerState(){
 
-     this._screens = [CreateEventForm(GlobalKey()),MapPage(mapKey),CreateEventForm(GlobalKey())];
+     this._screens = [CreateEventForm(),MapPage(mapKey),CreateEventForm()];
    }
 
 
@@ -87,6 +87,7 @@ class _DisplayManagerState extends State<DisplayManager> {
                 label: 'Home'
             ),
             BottomNavigationBarItem(
+
                 icon:Icon(Icons.map),
                 label: 'Map'
             ),
