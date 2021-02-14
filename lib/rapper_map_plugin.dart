@@ -51,7 +51,7 @@ GPSButtonBuilder _defaultGPSButton(void Function() onTap){
                       break;
                   }
                 }),
-            onPressed: () =>  onTap),
+            onPressed: onTap),
       ),
     );
   };

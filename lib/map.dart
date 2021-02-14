@@ -72,7 +72,7 @@ class MapPageState extends State<MapPage> {
               onTap: (LatLng pos) => _popupLayerController.hidePopup(),
               mapController: mapController,
               plugins: [GPSPlugin(),PopupMarkerPlugin()],
-              pluginOptions: [gpsPluginOptions(markers, ()=>focusCurrentPos(markers)),popupPluginOptions(markers:markers,popupController: _popupLayerController)],
+              pluginOptions: [gpsPluginOptions(markers, () =>  mapController?.move(markers.last.point, mapController?.zoom)),popupPluginOptions(markers:markers,popupController: _popupLayerController)],
             );
           } else {
             return Icon(Icons.access_alarm);
@@ -82,7 +82,8 @@ class MapPageState extends State<MapPage> {
   }
 
   void focusCurrentPos(List<Marker> markers) {
-    this.mapController.move(markers.last.point, this.mapController.zoom);
+
+    mapController?.move(markers.last.point, mapController?.zoom);
   }
 
   void showPopupForFirstMarker() {

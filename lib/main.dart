@@ -1,6 +1,7 @@
 
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
+import 'package:free_radar/location_picker.dart';
 import 'rap_events.dart';
 import 'package:free_radar/create_event.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -58,7 +59,7 @@ class _DisplayManagerState extends State<DisplayManager> {
 
    _DisplayManagerState(){
 
-     this._screens = [CreateEventForm(),MapPage(mapKey),CreateEventForm()];
+     this._screens = [CreateEventForm(),MapPage(mapKey),LocationPicker()];
    }
 
 
