@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:free_radar/model/event.dart';
+
 
 import 'map/utils/icons.dart';
 

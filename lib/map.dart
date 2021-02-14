@@ -7,9 +7,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:free_radar/gps/gps.dart';
 import 'package:free_radar/map/service/gps.dart';
 import 'package:free_radar/model/event.dart';
+import 'package:free_radar/rapper_map.dart';
+import 'package:free_radar/rapper_map_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'map/utils/icons.dart' ;
-import 'popupMarker.dart';
 import 'package:latlong/latlong.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'rap_events.dart';
@@ -66,63 +67,12 @@ class MapPageState extends State<MapPage> {
 
                 ??
                 [];
-            return FlutterMap(
+            return FlexMap(
+              markers: markers,
+              onTap: (LatLng pos) => _popupLayerController.hidePopup(),
               mapController: mapController,
-              options: new MapOptions(
-                  maxZoom: 18.0,
-                  center: markers.last.point,
-                  plugins: [GPSPlugin(),PopupMarkerPlugin()],
-                  onTap: (LatLng pos) {
-                    _popupLayerController.hidePopup();
-                  }),
-              layers: [
-                TileLayerOptions(
-                    urlTemplate:
-                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    subdomains: ['a', 'b', 'c']),
-
-                GPSOptions(markers: markers, buttonBuilder: (BuildContext context,
-                    ValueNotifier<GPSServiceStatus> status,
-                    Function onPressed) {
-                  return Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0, right: 16.0),
-                      child: FloatingActionButton(
-                          child: ValueListenableBuilder<GPSServiceStatus>(
-                              valueListenable: status,
-                              builder: (BuildContext context,
-                                  GPSServiceStatus value, Widget child) {
-                                switch (value) {
-                                  case GPSServiceStatus.disabled:
-                                  case GPSServiceStatus.permissionDenied:
-                                  case GPSServiceStatus.unsubscribed:
-                                    return const Icon(
-                                      Icons.location_disabled,
-                                      color: Colors.white,
-                                    );
-                                    break;
-                                  default:
-                                    return const Icon(
-                                      Icons.location_searching,
-                                      color: Colors.white,
-                                    );
-                                    break;
-                                }
-                              }),
-                          onPressed: () => focusCurrentPos(markers)),
-                    ),
-                  );
-                }),
-                PopupMarkerLayerOptions(
-                  markers: markers,
-                  popupSnap: PopupSnap.top,
-                  popupController: _popupLayerController,
-                  popupBuilder: (BuildContext _,Marker marker) =>
-           (marker is MCMarker) ? new Container() : EventPopup(marker)
-
-                )
-              ],
+              plugins: [GPSPlugin(),PopupMarkerPlugin()],
+              pluginOptions: [gpsPluginOptions(markers, ()=>focusCurrentPos(markers)),popupPluginOptions(markers:markers,popupController: _popupLayerController)],
             );
           } else {
             return Icon(Icons.access_alarm);
