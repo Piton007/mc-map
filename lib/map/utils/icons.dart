@@ -10,14 +10,20 @@ Widget buildAssetIcon(String name, double size) {
   return ImageIcon(Svg('public/$name'), size: size);
 }
 
+
+
+
+
+
+
 class EventMarker extends Marker {
   EventModel model;
 
   EventMarker(
       {@required EventModel event,
       LatLng point,
-      double width,
-      double height,
+      double width = 60.0,
+      double height = 60.0,
       WidgetBuilder builder,
       AnchorPos anchorPos})
       : model = event,

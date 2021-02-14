@@ -75,6 +75,7 @@ class _DisplayManagerState extends State<DisplayManager> {
       appBar: AppBar(
         title: Text("Marker Popup Demo"),
       ),
+
       body: IndexedStack(
         index:_screenSelected,
         children: _screens,
