@@ -16,6 +16,14 @@ class EventModel {
         nombre: json['nombre'] as String,
         ubicacion: json['ubicacion'] as GeoPoint);
   }
+   Map<String,dynamic> toJSON(){
+    return {
+      "creador":this.creador,
+      "cupos":this.cupos,
+      "nombre":this.nombre,
+      "ubicacion":this.ubicacion
+    };
+  }
 
   EventModel.fromDocument(QueryDocumentSnapshot document)
       : this.creador = document['creador'],

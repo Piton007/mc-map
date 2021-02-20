@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:free_radar/location_picker.dart';
+import "model/event.dart";
+
 import 'package:latlong/latlong.dart';
+import 'package:geocoding/geocoding.dart';
 
 const CUPOS_UPPER_LIMIT = 100;
 const CUPOS_LOWER_LIMIT = 5;
@@ -15,8 +19,13 @@ class CreateEventForm extends StatefulWidget {
 
 class _CreateEventFormState extends State<CreateEventForm> {
   final _formKey = GlobalKey<FormState>();
+  final creatorController = TextEditingController();
+  final nameController = TextEditingController();
+  final ticketsController = TextEditingController();
+  final addressController = TextEditingController();
+
   LatLng eventLocation;
-  String address = "Calle Victor Humareda mzn x lote 21";
+
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +37,24 @@ class _CreateEventFormState extends State<CreateEventForm> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               TextFormField(
+                controller: creatorController,
                 key: UniqueKey(),
+
+                decoration: const InputDecoration(
+                    icon: Icon(Icons.account_balance),
+                    hintText: '¿Cómo te llamas?',
+                    labelText: 'Creador'),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Ingresa tu nombre';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: nameController,
+                key: UniqueKey(),
+
                 decoration: const InputDecoration(
                     icon: Icon(Icons.assignment),
                     hintText: '¿Cómo se llama tu evento?',
@@ -41,7 +67,9 @@ class _CreateEventFormState extends State<CreateEventForm> {
                 },
               ),
               TextFormField(
+                controller: ticketsController,
                 key: UniqueKey(),
+
                 decoration: const InputDecoration(
                     icon: Icon(Icons.accessibility),
                     hintText: '¿Cuántos cupos tendrá?',
@@ -59,7 +87,6 @@ class _CreateEventFormState extends State<CreateEventForm> {
                   return result;
                 },
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -69,8 +96,7 @@ class _CreateEventFormState extends State<CreateEventForm> {
                         decoration: const InputDecoration(
                             icon: Icon(Icons.location_on_rounded),
                             labelText: 'Ubicación'),
-                        onTap: () => print("hello"),
-                        initialValue: address,
+                        controller: addressController,
                         validator: (value) {
                           var result;
                           if (value.isEmpty) {
@@ -80,25 +106,39 @@ class _CreateEventFormState extends State<CreateEventForm> {
                           return result;
                         },
                       ),
-                      flex: 2),
-                  Expanded(child: IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: ()=>navigateToLocationPicker(context),
-                  ))
+                      flex: 4),
+                  Expanded(
+                      child: IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () => navigateToLocationPicker(context),
+                      ),
+                      flex: 1)
                 ],
               ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                 child: Center(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // Validate returns true if the form is valid, or false
                       // otherwise.
 
                       if (_formKey.currentState.validate()) {
+                        var event = EventModel(
+                            creador: creatorController.text,
+                            cupos: int.tryParse(ticketsController.text),
+                            nombre: nameController.text,
+                            ubicacion: GeoPoint(eventLocation.latitude,
+                                eventLocation.longitude));
                         // If the form is valid, display a Snackbar.
-                        Scaffold.of(context).showSnackBar(
-                            SnackBar(content: Text('Processing Data')));
+                        FirebaseFirestore.instance
+                            .collection('rap_events')
+                            .add(event.toJSON())
+                            .then((_) {
+                          displayNotification(context);
+                          resetForm();
+                        });
+
                       }
                     },
                     child: Text('Submit'),
@@ -110,12 +150,36 @@ class _CreateEventFormState extends State<CreateEventForm> {
         ));
   }
 
+  void displayNotification(BuildContext context) {
+    var snackBar =
+        SnackBar(content: Text('Tu evento se ha creado exitosamente!'));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 
   Future<void> navigateToLocationPicker(BuildContext context) async {
-   LatLng result = await Navigator.push(context,MaterialPageRoute(builder: (context) => LocationPicker()));
-   setState(() {
-      print(result);
-      address = "hey";
-   });
+    LatLng result = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => LocationPicker()));
+    Placemark placemark = await getPlaceMarkfromCoordinates(result);
+    addressController.text =  "${placemark.street}, ${placemark.locality}";
+    setState(() {
+      eventLocation = result;
+
+    });
+  }
+
+  Future<Placemark> getPlaceMarkfromCoordinates(LatLng point) async {
+    return (await placemarkFromCoordinates(point.latitude, point.longitude))
+        .reduce((value, element) => Placemark(
+            street: (element.street.isEmpty) ? value.street : element.street,
+            locality: (element.locality.isEmpty)
+                ? value.locality
+                : element.locality));
+  }
+
+  void resetForm(){
+    ticketsController.clear();
+    nameController.clear();
+    creatorController.clear();
+    addressController.clear();
   }
 }

@@ -30,6 +30,7 @@ dependencies:
   bloc_pattern: ^2.3.2
   flutter_svg_provider: any
   flutter_map: any
+  geocoding: any
   flutter_map_marker_popup: any
   geolocator: ^5.3.1
 

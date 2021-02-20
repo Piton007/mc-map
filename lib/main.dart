@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         Bloc((_) => EventBloc() )
       ],
       child: MaterialApp(
-          title: 'Marker Popup Demo',
+          title: 'MC Radar',
           theme: ThemeData(
             primarySwatch: Colors.deepOrange,
           ),
