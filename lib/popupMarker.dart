@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_marker_popup/extension_api.dart';
+import 'package:free_radar/joinin_event.dart';
 
 
 import 'map/utils/icons.dart';
@@ -7,13 +9,15 @@ import 'map/utils/icons.dart';
 
 class EventPopup extends StatelessWidget {
   final EventMarker event;
+  final PopupController popupController;
 
-  EventPopup(Marker event):event = event as EventMarker;
+  EventPopup(Marker event, PopupController popupController):event = event, popupController = popupController;
 
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: (event.model.isAvailable() ) ? Colors.white : Colors.deepOrange,
       child: InkWell(
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -21,7 +25,7 @@ class EventPopup extends StatelessWidget {
             _cardDescription(context),
           ],
         ),
-        onTap: () => print("on tap"),
+        onTap: ()=> (event.model.isAvailable() ) ?  showEvent(context): null,
       ),
     );
   }
@@ -30,6 +34,7 @@ class EventPopup extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Container(
+
         constraints: BoxConstraints(minWidth: 100, maxWidth: 200),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,6 +63,11 @@ class EventPopup extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> showEvent(BuildContext context) async {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => JoinInEvent(marker: this.event)));
+    this.popupController.hidePopup();
   }
 }
 

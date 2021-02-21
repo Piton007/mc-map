@@ -55,6 +55,7 @@ class MapPageState extends State<MapPage> {
         builder: (context, AsyncSnapshot<QuerySnapshot> stream) {
           if (stream.hasData) {
              List<Marker> markers = stream.data?.docs?.map((e) =>
+
                 EventMarker.fromModel(
                     event: EventModel.fromDocument(e),
                     builder: (_) =>

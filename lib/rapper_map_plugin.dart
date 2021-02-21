@@ -16,7 +16,7 @@ LayerOptions popupPluginOptions({List<Marker> markers, dynamic popupController }
       popupSnap: PopupSnap.top,
       popupController: popupController,
       popupBuilder: (BuildContext _,Marker marker) =>
-      (marker is MCMarker) ? new Container() : EventPopup(marker)
+      (marker is MCMarker) ? new Container() : EventPopup(marker,popupController)
   );
 }
 
