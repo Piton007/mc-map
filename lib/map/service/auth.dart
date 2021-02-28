@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-class Auth {
+class AuthFirebase {
   final FirebaseAuth service;
 
-  Auth({this.service});
+  AuthFirebase({this.service});
 
   subscribeToAuthChanges(){
     return service.authStateChanges();

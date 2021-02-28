@@ -34,6 +34,8 @@ dependencies:
   flutter_map_marker_popup: any
   geolocator: ^5.3.1
   firebase_auth: "^0.20.1"
+  flutter_facebook_auth: ^1.0.0
+  flutter_auth_buttons: any
 
 
   # The following adds the Cupertino Icons font to your application.
